@@ -1,4 +1,5 @@
-var ParseXbrl = require('../index.js');
+var fs = require('fs'),
+    ParseXbrl = require('../index.js');
 
 var wlRossHolingCorp10kParsed = {
  'NetCashFlowsContinuing': -791415,
@@ -646,6 +647,18 @@ describe('parse-xbrl', function () {
   
   it('should parse the xbrl for Google/Alphabet 10k', function (done) {
     var google10kOutput = ParseXbrl.parse('./test/sampleXbrlDocuments/google_10k.xml');
+    google10kOutput.then(function(results) {
+      for (var key in results) {
+        if (google10kParsed[key]) {
+          expect(results[key]).toBe(google10kParsed[key]);
+          done();
+        }
+      }
+    })
+  })
+  
+  it('should parse from a readable stream', function (done) {
+    var google10kOutput = ParseXbrl.parse(fs.createReadStream('./test/sampleXbrlDocuments/google_10k.xml'));
     google10kOutput.then(function(results) {
       for (var key in results) {
         if (google10kParsed[key]) {

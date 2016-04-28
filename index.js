@@ -21,9 +21,22 @@
 
     return new Promise(function(resolve, reject) {
 
-      // Load xml and parse to json
-      fs.readFileAsync(pathToXbrlDoc).then(function(data) {
-        // fs.writeFile('parsedXml.json', xmlParser.toJson(data), function(err) {
+      if(typeof pathToXbrlDoc.read === 'function' && typeof pathToXbrlDoc.read === 'function') {
+        let chunks = [];
+        pathToXbrlDoc.on('data', chunk => chunks.push(chunk));
+        pathToXbrlDoc.on('end', () => parseXBRL(Buffer.concat(chunks).toString('utf8'), resolve, reject));
+      } else {
+        // Load xml and parse to json
+        fs.readFileAsync(pathToXbrlDoc)
+        .then(function(data) { parseXBRL(data, resolve, reject); })
+        .catch(function(err) {
+            reject('Problem with reading file\n' + err);
+        })
+      }
+    })
+
+    function parseXBRL(data, resolve, reject) {
+      // fs.writeFile('parsedXml.json', xmlParser.toJson(data), function(err) {
         //   console.log(err)
         // })
         var jsonObj =JSON.parse(xmlParser.toJson(data));
@@ -58,10 +71,7 @@
         } else {
           reject('No year end found.')
         }
-      }).catch(function(err) {
-          reject('Problem with reading file\n' + err);
-      })
-    })
+    }
 
     // Utility functions
     function loadField(conceptToFind, fieldName, key) {
@@ -77,7 +87,7 @@
       }
       self.fields[fieldName] = _.get(concept, key, 'Field not found.');
       
-      console.log(`loaded ${fieldName}: ${self.fields[fieldName]}`);
+      //console.log(`loaded ${fieldName}: ${self.fields[fieldName]}`);
     }
 
     function getFactValue(concept, periodType) {
