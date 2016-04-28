@@ -2,6 +2,7 @@ function load(xbrlDoc) {
     var self = this;
     self.xbrl = xbrlDoc;
 
+    /*
     console.log('FUNDAMENTAL ACCOUNTING CONCEPTS:');
     console.log('Entity registrant name: ' + self.xbrl.fields['EntityRegistrantName']);
     console.log('CIK: ' + self.xbrl.fields['EntityCentralIndexKey']);
@@ -14,7 +15,8 @@ function load(xbrlDoc) {
     console.log('Income Statement Period (YTD, current period, period start date): ' + self.xbrl.fields['IncomeStatementPeriodYTD'] + ' to ' + self.xbrl.fields['BalanceSheetDate']);
     console.log('Context ID for document period focus (instants): ' + self.xbrl.fields['ContextForInstants']);
     console.log('Context ID for YTD period (durations): ' + self.xbrl.fields['ContextForDurations']);
-
+    */
+    
     // Assets
     self.xbrl.fields['Assets'] = self.xbrl.getFactValue('us-gaap:Assets', 'Instant') || 0;
 

@@ -8,7 +8,8 @@
   var FundamentalAccountingConcepts = require('./FundamentalAccountingConcepts.js');
 
   function parse(pathToXbrlDoc) {
-    var self = this;
+    var self = this,
+        warnings = [];
     self.loadYear = loadYear;
     self.loadField = loadField;
     self.getFactValue = getFactValue;
@@ -81,8 +82,13 @@
       //console.log(fieldName + "=> " + JSON.stringify(concept, null, 3));
       if(_.isArray(concept)) {
         // Default to the first available contextRef
-        console.warn('Found ' + concept.length + ' context references')
-        _.forEach(concept, function(c, idx) { console.warn('=> ' + c.contextRef + (idx === 0 ? ' (selected)' : ''))});
+        var warning = `Found ${concept.length} context references: `
+        _.forEach(concept, function(c, idx) { warning += `\n${idx + 1}\t${c.contextRef} ${(idx === 0 ? '(selected)' : '')}`; });
+        if (warnings.indexOf(warning) === -1) {
+          console.warn(warning);
+          warnings.push(warning);
+        }
+        
         concept = _.find(concept, function(c, idx) { return idx === 0; });
       }
       self.fields[fieldName] = _.get(concept, key, 'Field not found.');
