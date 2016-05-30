@@ -81,15 +81,16 @@
       var concept = _.get(self.documentJson, 'dei:' + conceptToFind);
       //console.log(fieldName + "=> " + JSON.stringify(concept, null, 3));
       if(_.isArray(concept)) {
-        // Default to the first available contextRef
-        var warning = `Found ${concept.length} context references: `
-        _.forEach(concept, function(c, idx) { warning += `\n${idx + 1}\t${c.contextRef} ${(idx === 0 ? '(selected)' : '')}`; });
-        if (warnings.indexOf(warning) === -1) {
-          console.warn(warning);
-          warnings.push(warning);
-        }
+        // warn about multliple concepts...
+        console.warn('Found ' + concept.length + ' context references')
+        _.forEach(concept, function(conceptInstance, idx) { 
+          console.warn('=> ' + conceptInstance.contextRef + (idx === 0 ? ' (selected)' : ''));
+        });
         
-        concept = _.find(concept, function(c, idx) { return idx === 0; });
+        // ... then default to the first available contextRef
+        concept = _.find(concept, function(conceptInstance, idx) { 
+          return idx === 0; 
+        });
       }
       self.fields[fieldName] = _.get(concept, key, 'Field not found.');
       
